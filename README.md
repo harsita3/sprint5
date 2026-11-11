@@ -56,9 +56,6 @@ The application must provide APIs for the following. Fill in the API contract fo
 | 7 | Get warehouse statistics (dispatch summary) | | | | | | |
 | 8 | Add data manually (e.g. create a dispatch batch and assign packages) | | | | | | |
 
-> **Your task:** Complete the table before you start building. For each API, decide the HTTP method, endpoint path, path and query parameters, request body, response body, and status codes — including error cases (e.g. package not found, deleting a dispatched package).
-
-> **Note:** To have data to work with, your app needs an endpoint to add data manually (row 8) — the other requirements only cover viewing dispatch batches, not creating them.
 
 ## 5. Scope
 
