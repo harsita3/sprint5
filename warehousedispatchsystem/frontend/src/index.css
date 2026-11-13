@@ -1,0 +1,123 @@
+* { box-sizing: border-box; }
+
+
+
+
+body {
+
+margin: 0;
+
+font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+background: #f4f6fb;
+
+color: #1b2340;
+
+line-height: 1.4;
+
+}
+
+
+
+
+.app { max-width: 520px; margin: 40px auto; padding: 0 16px; }
+
+
+
+
+h1 { margin: 0; font-size: 2rem; }
+
+.count { margin: 4px 0 20px; color: #5a6380; font-weight: 600; }
+
+
+
+
+.add { display: flex; gap: 8px; margin-bottom: 16px; }
+
+.add input {
+
+flex: 1;
+
+min-width: 0;
+
+font: inherit;
+
+padding: 10px 14px;
+
+border: 1px solid #ccd3e4;
+
+border-radius: 10px;
+
+background: #fff;
+
+}
+
+
+
+
+button {
+
+font: inherit;
+
+font-weight: 700;
+
+cursor: pointer;
+
+border: 0;
+
+border-radius: 10px;
+
+padding: 10px 18px;
+
+background: #3b5bdb;
+
+color: #fff;
+
+}
+
+button:hover { background: #2f4bc0; }
+
+button:focus-visible, input:focus-visible { outline: 3px solid #f59f00; outline-offset: 2px; }
+
+
+
+
+.empty { color: #5a6380; }
+
+
+
+
+.tasks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.tasks li {
+
+display: flex;
+
+align-items: center;
+
+justify-content: space-between;
+
+gap: 10px;
+
+background: #fff;
+
+border: 1px solid #e1e6f2;
+
+border-radius: 10px;
+
+padding: 10px 12px;
+
+}
+
+.tasks label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+
+.tasks input[type="checkbox"] { width: 20px; height: 20px; accent-color: #3b5bdb; }
+
+.tasks li.done label { text-decoration: line-through; color: #9aa2b8; }
+
+
+
+
+.delete { background: #fde8e8; color: #c92a2a; padding: 4px 12px; }
+
+.delete:hover { background: #fbd5d5; }
