@@ -1,11 +1,13 @@
-from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime
-from sqlalchemy.orm import Session, declarative_base
-from datetime import timedelta, datetime, timezone
-from fastapi import HTTPException
-import jwt
-from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError
-from pydantic import BaseModel
+from sqlalchemy import Integer, String, Column, create_engine, ForeignKey, DateTime;
+from sqlalchemy.orm import Session, declarative_base;
+from datetime import timedelta, datetime, timezone;
+from fastapi import HTTPException;
+import jwt;
+from argon2 import PasswordHasher;
+from argon2.exceptions import VerifyMismatchError;
+
+
+ph = PasswordHasher()
 
 
 DB_PATH = "warehouse.db"
@@ -257,19 +259,19 @@ def create_dispatchBatches(destination, vehicle_number, dispatch_date=None):
 def verify_login(username, password):
     session = Session(engine)
     user = session.query(User).filter_by(user_name = username).first()
-    if user in None:
+    if user is None:
         session.close()
         return False
     try:
-        ph.verify()
+        
         ph.verify(user.password, password)
        
     
-    except verifyMismatchError:
+    except VerifyMismatchError:
         return False
     session.close()
-    access_token = create_token(usernanme=username, token_type="access")
-    refresh_token = create_token(username, token_tyoe= "refresh")
+    access_token = create_token(username=username, token_type="access") 
+    refresh_token = create_token(username, token_type= "refresh")
     return {"access_token": access_token, "refresh_token": refresh_token}
     
     # if username == USERNAME and password == PASSWORD:
@@ -280,7 +282,7 @@ def verify_login(username, password):
 
 
 def create_token(username, token_type):
-    time = REFRESH_TOKEN_EXPIRY
+    time = ACCESS_TOKEN_EXPIRY
     if token_type == "refresh":
         time = REFRESH_TOKEN_EXPIRY
     payload={
@@ -291,7 +293,7 @@ def create_token(username, token_type):
     token = jwt.encode(payload = payload , key = SECRET_KEY, algorithm=ALGORITHM)
     return token
 
-def verify_token(token, token_type):
+def verify_token(token, token_type="access"):
     try:
         payload = jwt.decode(jwt= token, key = SECRET_KEY , algorithms=[ALGORITHM])
     except:
@@ -302,13 +304,13 @@ def verify_token(token, token_type):
 
 
 
-def register_user(user_name:str, password:str):
+def register_user(username:str, password:str):
     session = Session(engine)
-    user_exist = session.query(User).filter_by(user_name=user_name).first()
+    user_exist = session.query(User).filter_by(user_name=username).first()
     if user_exist is not None:
         session.close()
         return False
-    session.add(User(user_name=user_name, password=ph.hash(password)))
+    session.add(User(user_name=username, password=ph.hash(password)))
     session.commit()
     session.close()
     return True
