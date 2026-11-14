@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header, Body;
 from fastapi.middleware.cors import CORSMiddleware;
 from datetime import datetime, date;
-
+from pydantic import BaseModel
 import function
 
 app = FastAPI()
@@ -13,13 +13,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class PackageCreate(BaseModel):
+    name: str
+    destination: str
+    weight: float
+
+class PackageUpdate(BaseModel):
+    name: str | None = None
+    destination: str | None = None
+    weight: float | None = None
+
+class DispatchCreate(BaseModel):
+    destination: str
+    vehicle_number: str
+    dispatch_date: str
+
+class UserCredentials(BaseModel):
+    username: str
+    password: str
+
+
 #E1
 @app.post("/packages")
-def register_package( name, destination, weight,  token = Header(None)):
+def register_package(package: PackageCreate, token = Header(None)):
     username = function.verify_token(token = token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid or Expired token")
-    return function.register_package(name=name, destination=destination, weight=weight)
+    return function.register_package(name=package.name, destination=package.destination, weight=package.weight)
 
 #E2
 @app.get("/packages/{package_id}")
@@ -31,11 +51,11 @@ def get_package_details(package_id,  token = Header(None)):
 
 #E3
 @app.patch("/packages/{package_id}")
-def update_package_details(package_id, name, destination, weight, token = Header(None)):
+def update_package_details(package_id, package: PackageUpdate, token = Header(None)):
     username = function.verify_token(token = token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid or Expired token")
-    return function.update_package_details(package_id=package_id, name=name, destination=destination, weight=weight)
+    return function.update_package_details(package_id=package_id, name=package.name, destination=package.destination, weight=package.weight)
 
 #E4
 @app.delete("/packages/{package_id}")
@@ -71,16 +91,16 @@ def warehouse_summary( token = Header(None)):
 
 #E8 
 @app.post("/dispatch-batches")
-def add_dispatch(destination, vehicle_number, dispatch_date, token = Header(None)):
+def add_dispatch(batch: DispatchCreate, token = Header(None)):
     username = function.verify_token(token = token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid or Expired token")
-    return function.create_dispatchBatches(destination=destination, vehicle_number=vehicle_number, dispatch_date=dispatch_date)
+    return function.create_dispatchBatches(destination=batch.destination, vehicle_number=batch.vehicle_number, dispatch_date=batch.dispatch_date)
 
 
 @app.post("/login")
-def login(username = Body(), password = Body()):
-    token =  function.verify_login(username = username, password=password)
+def login(user: UserCredentials):
+    token =  function.verify_login(username = user.username, password=user.password)
     if not token :
         raise HTTPException(status_code = 401, detail="Invalid credentials")
     return token
@@ -96,7 +116,10 @@ def refresh(refresh_token = Header(None)):
 
 
 @app.post("/register")
-def register_user(username = Body(), password = Body()):
-    if function.register_user(username = username, password = password):
+def register_user(user: UserCredentials):
+    if function.register_user(username = user.username, password = user.password):
         return{"message": "user registered succesfully"}
     raise HTTPException(status_code=404, detail="user already exist")
+
+
+
